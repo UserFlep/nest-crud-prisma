@@ -27,47 +27,53 @@ export class TagsController {
     private tagService: TagsService
   ) {}
 
-  // @UseGuards(AtAuthGuard)
-  // @ApiResponse({type: CreateTagResDto})
-  // @Post()
-  // async createTag(@Body() tagDto: CreateTagDto, @Req() req: Request): Promise<CreateTagResDto>{
-  //   const user = req.user as JwtPayloadDto;
-  //   return await this.tagService.createTag(tagDto, user.uid);
-  // }
-  //
-  // @UseGuards(AtAuthGuard)
-  // @ApiResponse({type: GetTagResDto})
-  // @Get('/:id')
-  // async getTagById(@Param('id') tagId: string): Promise<GetTagResDto>{
-  //   if(!tagId){
-  //     throw new BadRequestException("Не получен id")
-  //   }
-  //   return await this.tagService.getTagById(tagId);
-  // }
-  //
-  // @UseGuards(AtAuthGuard)
-  // @ApiResponse({type: GetTagsWithFiltersResDto})
-  // @Get()
-  // async getTagsWithFilters(
-  //   @Query() filtersDto: FiltersWhitelistDto
-  // ): Promise<GetTagsWithFiltersResDto>{
-  //   return await this.tagService.getTagsWithFilters(filtersDto);
-  // }
-  //
-  // @UseGuards(AtAuthGuard)
-  // @ApiResponse({type: UpdateTagResDto})
-  // @Put('/:id')
-  // async updateTag(@Param('id') tagId: number, @Body() tagDto: UpdateTagDto, @Req() req: Request): Promise<UpdateTagResDto>{
-  //   const user = req.user as JwtPayloadDto;
-  //   const updatedTag = await  this.tagService.updateTag(user.uid, tagId, tagDto)
-  //   return updatedTag;
-  // }
-  //
-  // @UseGuards(AtAuthGuard)
-  // @ApiResponse({status: 200})
-  // @Delete('/:id')
-  // async removeTag(@Param('id') tagId: number, @Req() req: Request){
-  //   const user = req.user as JwtPayloadDto;
-  //   await this.tagService.removeTag(tagId, user.uid)
-  // }
+  @UseGuards(AtAuthGuard)
+  @ApiResponse({type: CreateTagResDto})
+  @Post()
+  async createTag(@Body() tagDto: CreateTagDto, @Req() req: Request){
+    const user = req.user as JwtPayloadDto;
+    return this.tagService.createTag({...tagDto, user: {connect: {uid: user.uid}}});
+  }
+
+  @UseGuards(AtAuthGuard)
+  @ApiResponse({type: GetTagResDto})
+  @Get('/:id')
+  async getTagById(@Param('id') tagId: number){
+    if(isNaN(tagId)){
+      throw new BadRequestException("id не валиден")
+    }
+    return this.tagService.findTag({id: tagId});
+  }
+
+  @UseGuards(AtAuthGuard)
+  @ApiResponse({type: GetTagsWithFiltersResDto})
+  @Get()
+  async getTagsWithFilters(
+    @Query() filtersDto: FiltersWhitelistDto
+  ){
+    // return await this.tagService.findTags({});
+    return
+  }
+
+  @UseGuards(AtAuthGuard)
+  @ApiResponse({type: UpdateTagResDto})
+  @Put('/:id')
+  async updateTag(@Param('id') tagId: number, @Body() tagDto: UpdateTagDto, @Req() req: Request){
+    if(isNaN(tagId)){
+      throw new BadRequestException("id не валиден")
+    }
+    const user = req.user as JwtPayloadDto;
+    return this.tagService.updateTag({where: {id: tagId}, data: {...tagDto}},  user.uid)
+  }
+
+  @UseGuards(AtAuthGuard)
+  @ApiResponse({status: 200})
+  @Delete('/:id')
+  async removeTag(@Param('id') tagId: number, @Req() req: Request){
+    if(isNaN(tagId)){
+      throw new BadRequestException("id не валиден")
+    }
+    const user = req.user as JwtPayloadDto;
+    await this.tagService.removeTag({id: tagId}, user.uid)
+  }
 }

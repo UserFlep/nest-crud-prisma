@@ -1,11 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {BadRequestException, Injectable, UnauthorizedException} from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import {
-  FiltersWhitelistDto,
-  UpdateTagDto,
-  CreateTagDto
-} from "./dto/inputDtos";
-import { CreateTagResDto, GetTagResDto, GetTagsWithFiltersResDto, UpdateTagResDto } from "./dto/outputDtos";
 import {Prisma, Tag} from "@prisma/client";
 
 @Injectable()
@@ -41,6 +35,10 @@ export class TagsService {
   }
 
   async createTag (data: Prisma.TagCreateInput): Promise<Tag | null>{
+    const matchesTag = await this.prisma.tag.findUnique({where: {name: data.name}})
+    if(matchesTag){
+      throw new BadRequestException("Такой тег уже существует")
+    }
     return this.prisma.tag.create({
       data,
     });
@@ -48,16 +46,45 @@ export class TagsService {
 
   async updateTag(params: {
     where: Prisma.TagWhereUniqueInput;
-    data: Prisma.TagUpdateInput;
-  }): Promise<Tag> {
+    data: Prisma.TagUpdateManyMutationInput;
+  }, userId: string): Promise<Tag> {
     const { where, data } = params;
+    //Тег с таким ид существует
+    if(where.id){
+      const matchesTag = await this.prisma.tag.findUnique({where: {id: where.id}})
+      if(!matchesTag){
+        throw new BadRequestException("Тег не найден")
+      }
+      //Тег обновляется создателем
+      if(matchesTag.creator !== userId){
+        throw new UnauthorizedException("Только создатель может изменять тег")
+      }
+    }
+    //Устанавливаемое имя тега не занято
+    if(typeof data.name == 'string'){
+      const equalTag = await this.prisma.tag.findUnique({where: {name: data.name}})
+      if(equalTag){
+        throw new BadRequestException("Такой тег уже существует")
+      }
+    }
     return this.prisma.tag.update({
       data,
       where,
     });
   }
 
-  async removeTag(where: Prisma.TagWhereUniqueInput): Promise<Tag> {
+  async removeTag(where: Prisma.TagWhereUniqueInput, userId: string): Promise<Tag> {
+    //Тег с таким ид существует
+    if(where.id){
+      const matchesTag = await this.prisma.tag.findUnique({where: {id: where.id}})
+      if(!matchesTag){
+        throw new BadRequestException("Тег не найден")
+      }
+      //Тег удаляется создателем
+      if(matchesTag.creator !== userId){
+        throw new UnauthorizedException("Только создатель может изменять тег")
+      }
+    }
     return this.prisma.tag.delete({
       where,
     });

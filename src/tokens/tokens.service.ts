@@ -37,16 +37,6 @@ export class TokensService {
         userId: data.user.connect.uid
       }
     })
-    // const existsToken = await this.prisma.token.findUnique({where: {userId: data.user.connect.uid}});
-    // if(existsToken){
-    //   return this.prisma.token.update({
-    //     data: {token: data.token},
-    //     where: {id: existsToken.id}
-    //   });
-    // }
-    // return this.prisma.token.create({
-    //   data,
-    // });
   }
   async removeToken(where: Prisma.TokenWhereUniqueInput): Promise<Token> {
     return this.prisma.token.delete({
