@@ -17,10 +17,11 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt-at') {
   }
 
   async validate(payload: JwtPayloadDto): Promise<JwtPayloadDto> {
-    const matchesUser = this.userService.findUserById(payload.uid);
-    if(!matchesUser){
-      throw new HttpException('Пользователь не найден', HttpStatus.UNAUTHORIZED);
-    }
+    //Раскомментировать и изменить для prisma
+    // const matchesUser = this.userService.findUserById(payload.uid);
+    // if(!matchesUser){
+    //   throw new HttpException('Пользователь не найден', HttpStatus.UNAUTHORIZED);
+    // }
     return payload
   }
 }

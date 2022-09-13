@@ -38,10 +38,11 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-rt') {
     if(!refreshToken){
       throw new HttpException('Неверный токен', HttpStatus.UNAUTHORIZED);
     }
-    const matchesToken = await this.tokenService.findToken(refreshToken);
-    if(!matchesToken){
-      throw new HttpException('Неверный токен', HttpStatus.UNAUTHORIZED);
-    }
+    //Раскомментировать и изменить для prisma
+    // const matchesToken = await this.tokenService.findToken(refreshToken);
+    // if(!matchesToken){
+    //   throw new HttpException('Неверный токен', HttpStatus.UNAUTHORIZED);
+    // }
     return payload
   }
 }
