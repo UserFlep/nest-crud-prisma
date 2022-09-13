@@ -25,21 +25,21 @@ model Tag {
     name        String  @db.VarChar(40)  @unique
     creator     String? @db.Uuid
     sortOrder   Int     @db.Integer
-    user        User? @relation(fields: [creator], references: [uid])
+    user        User? @relation(fields: [creator], references: [uid], onDelete: SetNull )
     users       UserTag[]
 }
 
 model UserTag {
     id      Int     @db.Integer     @default(autoincrement()) @id
     userId  String  @db.Uuid
-    user    User    @relation(fields: [userId], references: [uid])
+    user    User    @relation(fields: [userId], references: [uid], onDelete: Cascade)
     tagId   Int     @db.Integer
-    tag     Tag     @relation(fields: [tagId], references: [id])
+    tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
 }
 
 model Token {
     id      Int     @db.Integer     @default(autoincrement()) @id
     userId  String  @db.Uuid    @unique
-    user    User    @relation(fields: [userId], references: [uid])
+    user    User    @relation(fields: [userId], references: [uid], onDelete: Cascade)
     token   String  @db.Text    @unique
 }

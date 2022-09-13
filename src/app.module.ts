@@ -1,4 +1,4 @@
-import {CacheModule, Module} from '@nestjs/common';
+import {CacheModule, forwardRef, Module} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TagsModule } from './tags/tags.module';
@@ -6,22 +6,14 @@ import {UsersModule} from "./users/users.module";
 import {TokensModule} from "./tokens/tokens.module";
 import {AuthModule} from "./auth/auth.module";
 import {UserTagsModule} from "./user-tags/user-tags.module";
+import { PrismaModule } from './prisma/prisma.module';
+import {ConfigModule} from "@nestjs/config";
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({
-    //   envFilePath: `.${process.env.NODE_ENV}.env`,
-    // }),
-    // SequelizeModule.forRoot({
-    //   dialect: 'postgres',
-    //   host: process.env.POSTGRES_HOST,
-    //   port: Number(process.env.POSTGRES_PORT),
-    //   username: process.env.POSTGRES_USER,
-    //   password: process.env.POSTGRES_PASSWORD,
-    //   database: process.env.POSTGRES_DB,
-    //   models: [User, Tag, UserTags, Token],
-    //   autoLoadModels: true,
-    // }),
+    ConfigModule.forRoot({
+      envFilePath: `.${process.env.NODE_ENV}.env`,
+    }),
     CacheModule.register({
       isGlobal: true
     }),
@@ -30,6 +22,7 @@ import {UserTagsModule} from "./user-tags/user-tags.module";
     AuthModule,
     UserTagsModule,
     TokensModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

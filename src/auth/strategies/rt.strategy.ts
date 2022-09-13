@@ -1,7 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {HttpException, HttpStatus, Injectable, UnauthorizedException} from "@nestjs/common";
 import { JwtPayloadDto } from '../../tokens/dto';
 import { TokensService } from "../../tokens/tokens.service";
 
@@ -36,13 +36,12 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-rt') {
   async validate(req:Request, payload:JwtPayloadDto){
     const refreshToken = req?.cookies?.refreshToken;
     if(!refreshToken){
-      throw new HttpException('Неверный токен', HttpStatus.UNAUTHORIZED);
+      throw new UnauthorizedException('Токен не валиден');
     }
-    //Раскомментировать и изменить для prisma
-    // const matchesToken = await this.tokenService.findToken(refreshToken);
-    // if(!matchesToken){
-    //   throw new HttpException('Неверный токен', HttpStatus.UNAUTHORIZED);
-    // }
+    const matchesToken = await this.tokenService.findToken({token: refreshToken});
+    if(!matchesToken){
+      throw new UnauthorizedException('Токен не валиден');
+    }
     return payload
   }
 }

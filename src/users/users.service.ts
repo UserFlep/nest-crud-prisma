@@ -1,85 +1,53 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateUserDto, UpdateUserDto } from "./dto/inputDtos"
+import { Injectable } from "@nestjs/common";
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from "src/prisma.service";
+import { PrismaService } from "src/prisma/prisma.service";
+import { User, Prisma  } from "@prisma/client";
 
 @Injectable()
 export class UsersService {
 
   constructor(
-      private prisma: PrismaService
+      private prisma: PrismaService,
   ) {}
 
-  // async createUser (userDto: CreateUserDto): Promise<User>{
-  //   const user = await this.userModel.create(userDto);
-  //   return user;
-  // }
-  //
-  // async getUserById (userId: string){
-  //   const user = await this.userModel.findOne({
-  //     where: {uid: userId},
-  //     attributes: {exclude: ['uid', 'password']},
-  //     include: [{
-  //       model: Tag,
-  //       as: 'tags',
-  //       attributes: {exclude: ['creator']},
-  //       through: {attributes: []}
-  //     }]
-  //   });
-  //   return user;
-  // }
-  //
-  // async updateUser (userId: string, userDto: UpdateUserDto): Promise<User> {
-  //   const existUser = await this.findExistUser(userDto.email, userDto.nickname);
-  //   if (existUser) {
-  //     if (existUser.nickname === userDto.nickname) {
-  //       throw new HttpException('Уже есть аккаунт с таким nickname', HttpStatus.BAD_REQUEST);
-  //     } else {
-  //       throw new HttpException('Уже есть аккаунт с таким email', HttpStatus.BAD_REQUEST);
-  //     }
-  //   }
-  //   const hashPassword = await bcrypt.hash(userDto.password, 3);
-  //   const [count, updatedRows] = await this.userModel.update({ ...userDto, password: hashPassword}, {
-  //     where: {
-  //       uid: userId
-  //     },
-  //     returning: ["email", "nickname"]
-  //   })
-  //   return updatedRows[0];
-  // }
-  //
-  // async removeUser(userId: string){
-  //   await this.userModel.destroy({where: {uid: userId}});
-  // }
-  //
-  // async findExistUser(email: string, nickname: string): Promise<User>{
-  //   const user = await this.userModel.findOne({
-  //     where: {
-  //       [Op.or]: [
-  //         { email },
-  //         { nickname }
-  //       ]
-  //     }
-  //   })
-  //   return user;
-  // }
-  //
-  // async findUserByEmail(email: string): Promise<User>{
-  //   const user = await this.userModel.findOne({
-  //     where: { email }
-  //   })
-  //   return user;
-  // }
-  //
-  // async findUserByNickname(nickname: string): Promise<User>{
-  //   const user = await this.userModel.findOne({
-  //     where: { nickname }
-  //   })
-  //   return user;
-  // }
-  //
-  // async findUserById(userId: string): Promise<User>{
-  //   return await this.userModel.findByPk(userId)
-  // }
+  async createUser (data: Prisma.UserCreateInput): Promise<User | null>{
+    return this.prisma.user.create({
+      data,
+    });
+  }
+
+  async updateUser(params: {
+    where: Prisma.UserWhereUniqueInput;
+    data: Prisma.UserUpdateInput;
+  }): Promise<User> {
+    const { where, data } = params;
+    if(data.password){
+      const hashPassword = await bcrypt.hash(data.password, 3);
+      data.password = hashPassword
+    }
+    return this.prisma.user.update({
+      data,
+      where,
+    });
+  }
+
+  async removeUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
+    // След строка закомментирована
+    // т.к. в методе logout на данный момент нет функционала кроме удаления токена из бд
+    // это итак произойдет т.к. в таблица token, поле userId установлено на onDelete: Cascade
+    //
+    // await this.authService.logout(where.uid)
+    return this.prisma.user.delete({
+      where,
+    });
+  }
+
+  async findUser(
+      userWhereInput: Prisma.UserWhereInput,
+  ): Promise<User | null> {
+    return this.prisma.user.findFirst({
+      where: userWhereInput
+    });
+  }
 
 }

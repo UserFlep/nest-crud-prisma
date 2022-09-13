@@ -4,6 +4,7 @@ import { UserTagsService } from './user-tags.service';
 import { TokensModule } from "../tokens/tokens.module";
 import { UsersModule } from "../users/users.module";
 import { TagsModule } from "../tags/tags.module";
+import {PrismaModule} from "../prisma/prisma.module";
 
 @Module({
   controllers: [UserTagsController],
@@ -11,7 +12,8 @@ import { TagsModule } from "../tags/tags.module";
   imports: [
     TokensModule,
     UsersModule,
-    TagsModule
+    TagsModule,
+    PrismaModule
   ],
 })
 export class UserTagsModule {}

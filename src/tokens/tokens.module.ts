@@ -2,6 +2,7 @@ import { forwardRef, Module } from "@nestjs/common";
 import { TokensService } from "./tokens.service";
 import { UsersModule } from "../users/users.module";
 import { JwtModule } from "@nestjs/jwt";
+import {PrismaModule} from "../prisma/prisma.module";
 
 @Module({
   controllers: [],
@@ -9,6 +10,7 @@ import { JwtModule } from "@nestjs/jwt";
   imports: [
     forwardRef(()=>UsersModule) ,
     JwtModule,
+    PrismaModule
   ],
   exports: [TokensService]
 })
