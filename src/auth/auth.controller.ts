@@ -51,7 +51,6 @@ export class AuthController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
-
     res.clearCookie(this.refreshCookieName);
   }
 

@@ -17,7 +17,7 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt-at') {
   }
 
   async validate(payload: JwtPayloadDto): Promise<JwtPayloadDto> {
-    const matchesUser = await this.userService.findUser({uid: payload.uid});
+    const matchesUser = await this.userService.findUser({where: {uid: payload.uid}});
     if(!matchesUser){
       throw new UnauthorizedException('Токен не валиден');
     }

@@ -43,10 +43,10 @@ export class UsersService {
   }
 
   async findUser(
-      userWhereInput: Prisma.UserWhereInput,
-  ): Promise<User | null> {
+      params: Prisma.UserFindFirstArgsBase
+  ): Promise<User | null > {
     return this.prisma.user.findFirst({
-      where: userWhereInput
+      ...params
     });
   }
 

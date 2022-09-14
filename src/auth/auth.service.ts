@@ -23,7 +23,7 @@ export class AuthService {
 
   async login (userDto: LoginEmailUserDto): Promise<TokensDto> {
 
-      const validUser = await this.usersService.findUser({email: userDto.email});
+      const validUser = await this.usersService.findUser({where: {email: userDto.email}});
       if(!validUser){
         throw new BadRequestException('Неверный логин или пароль');
       }
@@ -47,7 +47,7 @@ export class AuthService {
   }
 
   async refreshTokens (userId: string): Promise<TokensDto> {
-    const user = await this.usersService.findUser({uid: userId});
+    const user = await this.usersService.findUser({where: {uid: userId}});
     if(!user){
       throw new BadRequestException('Пользователя не существует');
     }

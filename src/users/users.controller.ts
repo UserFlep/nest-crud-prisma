@@ -32,12 +32,31 @@ export class UsersController {
   @UseGuards(AtAuthGuard)
   @ApiResponse({type: GetOneUserResDto})
   @Get()
-  async getOneUser(@Req() req: Request){
+  async getOneUser(@Req() req: Request): Promise<GetOneUserResDto>{
     const user = req.user as JwtPayloadDto; //req.user это распарсенный jwt payload // или <User>req.user
-    return await this.userService.findUser({uid: user.uid})
+    const userWithTags = await this.userService.findUser({
+      where: {uid: user.uid},
+      select: {
+        email: true,
+        nickname: true,
+        tags: {
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                sortOrder: true
+              }
+            }
+          }
+        }
+      }
+    })
       .catch(error =>{
+        console.log(error.message)
         throw new BadRequestException(error)
       });
+    return new GetOneUserResDto(userWithTags);
   }
 
   @UseGuards(AtAuthGuard)
