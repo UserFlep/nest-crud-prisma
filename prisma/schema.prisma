@@ -30,11 +30,12 @@ model Tag {
 }
 
 model UserTag {
-    id      Int     @db.Integer     @default(autoincrement()) @id
-    userId  String  @db.Uuid
     user    User    @relation(fields: [userId], references: [uid], onDelete: Cascade)
-    tagId   Int     @db.Integer
+    userId  String  @db.Uuid
     tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+    tagId   Int     @db.Integer
+
+    @@id([userId, tagId])
 }
 
 model Token {

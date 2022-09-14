@@ -27,24 +27,27 @@ export class UserTagsController {
     private userTagsService: UserTagsService
   ) {}
 
-  // @UseGuards(AtAuthGuard)
-  // @Post()
-  // async createUserTags(@Body() createUserTagsDto: CreateUserTagsDto, @Req() req: Request): Promise<ResCreateUserTagDto>{
-  //   const user = req.user as JwtPayloadDto;
-  //   return await this.userTagsService.createUserTags(user.uid, createUserTagsDto);
-  // }
-  //
-  // @UseGuards(AtAuthGuard)
-  // @Delete('/:id')
-  // async removeUserTag(@Param() removeUserTagDto: RemoveUserTagDto, @Req() req: Request): Promise<ResRemoveUserTagDto>{
-  //   const user = req.user as JwtPayloadDto;
-  //   return await this.userTagsService.removeTagById(user.uid, removeUserTagDto.id);
-  // }
-  //
-  // @UseGuards(AtAuthGuard)
-  // @Get('/my')
-  // async getUserCreatedTags(@Req() req: Request): Promise<ResGetUserCreatedTagsDto>{
-  //   const user = req.user as JwtPayloadDto;
-  //   return await this.userTagsService.getUserCretedTags(user.uid);
-  // }
+  @UseGuards(AtAuthGuard)
+  @Post()
+  async createUserTags(@Body() createUserTagsDto: CreateUserTagsDto, @Req() req: Request){
+    const user = req.user as JwtPayloadDto;
+    return await this.userTagsService.createUserTags(createUserTagsDto.tags.map(tagId=>({tagId, userId: user.uid})));
+  }
+
+  @UseGuards(AtAuthGuard)
+  @Delete('/:id')
+  async removeUserTag(@Param() removeUserTagDto: RemoveUserTagDto, @Req() req: Request){
+    const user = req.user as JwtPayloadDto;
+    return await this.userTagsService.removeUserTag({userId_tagId: {
+      userId: user.uid,
+      tagId: removeUserTagDto.id
+    }});
+  }
+
+  @UseGuards(AtAuthGuard)
+  @Get('/my')
+  async getUserCreatedTags(@Req() req: Request){
+    const user = req.user as JwtPayloadDto;
+    return await this.userTagsService.findUserTags(user.uid)
+  }
 }
