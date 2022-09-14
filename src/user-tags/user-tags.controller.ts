@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   CacheInterceptor,
   Controller,
@@ -31,7 +32,10 @@ export class UserTagsController {
   @Post()
   async createUserTags(@Body() createUserTagsDto: CreateUserTagsDto, @Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    return this.userTagsService.createUserTags(createUserTagsDto.tags.map(tagId=>({tagId, userId: user.uid})));
+    return await this.userTagsService.createUserTags(createUserTagsDto.tags.map(tagId=>({tagId, userId: user.uid})))
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 
   @UseGuards(AtAuthGuard)
@@ -44,13 +48,19 @@ export class UserTagsController {
         tagId: removeUserTagDto.id
       }
     }
-    return this.userTagsService.removeUserTag(where);
+    return await this.userTagsService.removeUserTag(where)
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 
   @UseGuards(AtAuthGuard)
   @Get('/my')
   async getUserCreatedTags(@Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    return this.userTagsService.findUserCreatedTags(user.uid)
+    return await this.userTagsService.findUserCreatedTags(user.uid)
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 }

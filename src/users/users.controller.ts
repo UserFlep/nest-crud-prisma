@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   CacheInterceptor,
   Controller,
@@ -33,7 +34,10 @@ export class UsersController {
   @Get()
   async getOneUser(@Req() req: Request){
     const user = req.user as JwtPayloadDto; //req.user это распарсенный jwt payload // или <User>req.user
-    return this.userService.findUser({uid: user.uid});
+    return await this.userService.findUser({uid: user.uid})
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 
   @UseGuards(AtAuthGuard)
@@ -41,7 +45,10 @@ export class UsersController {
   @Put()
   async updateUser(@Body() userDto: UpdateUserDto, @Req() req: Request): Promise<UpdateUserResDto>{
     const user = req.user as JwtPayloadDto;
-    return this.userService.updateUser({where: {uid: user.uid}, data: userDto});
+    return await this.userService.updateUser({where: {uid: user.uid}, data: userDto})
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 
   @UseGuards(AtAuthGuard)
@@ -49,7 +56,11 @@ export class UsersController {
   @Delete()
   async removeUser(@Req() req: Request, @Res({ passthrough: true }) res: Response){
     const user = req.user as JwtPayloadDto;
-    await this.userService.removeUser({uid: user.uid});
+    await this.userService.removeUser({uid: user.uid})
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
+
     res.clearCookie('refreshToken');
   }
 

@@ -12,9 +12,9 @@ export class TagsService {
   async findTag(
       tagWhereUniqueInput: Prisma.TagWhereUniqueInput,
   ): Promise<Tag | null> {
-    return this.prisma.tag.findUnique({
-      where: tagWhereUniqueInput,
-    });
+      return this.prisma.tag.findUnique({
+        where: tagWhereUniqueInput,
+      });
   }
 
   async findTags(params: {
@@ -37,10 +37,6 @@ export class TagsService {
   }
 
   async createTag (data: Prisma.TagCreateInput): Promise<Tag | null>{
-    const matchesTag = await this.prisma.tag.findUnique({where: {name: data.name}})
-    if(matchesTag){
-      throw new BadRequestException("Такой тег уже существует")
-    }
     return this.prisma.tag.create({
       data,
     });
@@ -62,13 +58,6 @@ export class TagsService {
         throw new UnauthorizedException("Только создатель может изменять тег")
       }
     }
-    //Устанавливаемое имя тега не занято
-    if(typeof data.name == 'string'){
-      const equalTag = await this.prisma.tag.findUnique({where: {name: data.name}})
-      if(equalTag){
-        throw new BadRequestException("Такой тег уже существует")
-      }
-    }
     return this.prisma.tag.update({
       data,
       where,
@@ -84,7 +73,7 @@ export class TagsService {
       }
       //Тег удаляется создателем
       if(matchesTag.creator !== userId){
-        throw new UnauthorizedException("Только создатель может изменять тег")
+        throw new UnauthorizedException("Только создатель может удалять тег")
       }
     }
     return this.prisma.tag.delete({

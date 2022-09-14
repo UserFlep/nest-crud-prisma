@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body, CacheInterceptor,
   Controller, Delete,
   Get,
@@ -31,14 +32,20 @@ export class TagsController {
   @Post()
   async createTag(@Body() tagDto: CreateTagDto, @Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    return this.tagService.createTag({...tagDto, user: {connect: {uid: user.uid}}});
+    return await this.tagService.createTag({...tagDto, user: {connect: {uid: user.uid}}})
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 
   @UseGuards(AtAuthGuard)
   @ApiResponse({type: GetTagResDto})
   @Get('/:id')
   async getTagById(@Param('id') tagId: number){
-    return this.tagService.findTag({id: tagId});
+    return await this.tagService.findTag({id: tagId})
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 
   @UseGuards(AtAuthGuard)
@@ -57,7 +64,10 @@ export class TagsController {
       skip: filtersDto.offset,
     }
 
-    return this.tagService.findTags(params);
+    return await this.tagService.findTags(params)
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 
   @UseGuards(AtAuthGuard)
@@ -69,7 +79,10 @@ export class TagsController {
       where: {id: tagId},
       data: tagDto
     }
-    return this.tagService.updateTag(updateParams, user.uid)
+    return await this.tagService.updateTag(updateParams, user.uid)
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 
   @UseGuards(AtAuthGuard)
@@ -77,6 +90,9 @@ export class TagsController {
   @Delete('/:id')
   async removeTag(@Param('id') tagId: number, @Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    return this.tagService.removeTag({id: tagId}, user.uid)
+    return await this.tagService.removeTag({id: tagId}, user.uid)
+      .catch(error =>{
+        throw new BadRequestException(error)
+      });
   }
 }

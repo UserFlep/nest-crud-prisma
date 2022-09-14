@@ -17,7 +17,6 @@ export class TokensService {
     const payload: JwtPayloadDto = { uid: user.uid, nickname: user.nickname, email: user.email  }
     const accessToken = await this.jwtService.signAsync(payload, {secret: process.env.ACCESS_TOKEN_SECRET, expiresIn: accessExpiresIn});
     const refreshToken = await this.jwtService.signAsync(payload, {secret: process.env.REFRESH_TOKEN_SECRET, expiresIn: refreshExpiresIn});
-
     return {
       accessToken,
       expiresIn: accessExpiresIn,
