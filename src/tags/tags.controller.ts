@@ -17,6 +17,7 @@ import { JwtPayloadDto } from "../tokens/dto";
 import { Request } from "express";
 import { FiltersWhitelistDto } from "./dto/inputDtos";
 import { CreateTagResDto, GetTagResDto, GetTagsWithFiltersResDto, UpdateTagResDto } from "./dto/outputDtos";
+import {Prisma} from "@prisma/client";
 
 @ApiTags('Теги')
 @Controller('tag')
@@ -51,8 +52,16 @@ export class TagsController {
   async getTagsWithFilters(
     @Query() filtersDto: FiltersWhitelistDto
   ){
-    // return await this.tagService.findTags({});
-    return
+    const orderBy = [];
+    filtersDto.sortByOrder && orderBy.push({sortOrder: 'asc'})
+    filtersDto.sortByName && orderBy.push({name: 'asc'})
+
+    return await this.tagService.findTags({
+      orderBy: orderBy.length !== 0 ? orderBy : undefined,
+      take: filtersDto.length,
+      skip: filtersDto.offset,
+    });
+    //return
   }
 
   @UseGuards(AtAuthGuard)

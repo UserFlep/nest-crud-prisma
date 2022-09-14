@@ -22,15 +22,17 @@ export class TagsService {
     take?: number;
     cursor?: Prisma.TagWhereUniqueInput;
     where?: Prisma.TagWhereInput;
-    orderBy?: Prisma.TagOrderByWithRelationInput;
+    orderBy?: Prisma.TagOrderByWithRelationInput[];
+    include?: Prisma.TagInclude;
   }): Promise<Tag[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take, cursor, where, orderBy, include } = params;
     return this.prisma.tag.findMany({
       skip,
       take,
       cursor,
       where,
       orderBy,
+      include
     });
   }
 
