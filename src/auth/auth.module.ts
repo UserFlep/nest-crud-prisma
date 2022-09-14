@@ -12,10 +12,10 @@ import {PrismaModule} from "../prisma/prisma.module";
   controllers: [AuthController],
   providers: [AuthService, AtStrategy, RtStrategy],
   imports: [
-    JwtModule.register({}),
-    forwardRef(() => UsersModule),
+    JwtModule,
+    UsersModule,
     PassportModule,
-    forwardRef(() => TokensModule),
+    TokensModule,
     PrismaModule
   ],
   exports: [AuthService]

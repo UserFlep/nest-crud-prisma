@@ -8,7 +8,7 @@ import {PrismaModule} from "../prisma/prisma.module";
   controllers: [],
   providers: [TokensService],
   imports: [
-    forwardRef(()=>UsersModule) ,
+    UsersModule,
     JwtModule,
     PrismaModule
   ],

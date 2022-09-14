@@ -4,7 +4,6 @@ import {
   Controller,
   Delete,
   Get,
-  Post,
   Put,
   Req,
   Res,
@@ -12,10 +11,9 @@ import {
   UseInterceptors
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AtAuthGuard, RtAuthGuard } from "../auth/guards";
 import { Request, Response } from "express";
-import { AuthService } from "../auth/auth.service";
 import { JwtPayloadDto } from "../tokens/dto";
 import {CreateUserDto, UpdateUserDto} from "./dto/inputDtos";
 import { GetOneUserResDto, UpdateUserResDto } from "./dto/outputDtos";

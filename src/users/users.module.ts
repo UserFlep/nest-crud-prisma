@@ -8,7 +8,6 @@ import {PrismaModule} from "../prisma/prisma.module";
   providers: [UsersService],
   controllers: [UsersController],
   imports: [
-    forwardRef(() => AuthModule),
     PrismaModule,
   ],
   exports: [UsersService]
