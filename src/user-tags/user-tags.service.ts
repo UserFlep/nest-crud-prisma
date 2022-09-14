@@ -8,7 +8,7 @@ export class UserTagsService {
 
   constructor(
       private prisma: PrismaService,
-      private tagServiсe: TagsService
+      private tagService: TagsService
   ) {}
 
   async createUserTags (data:Prisma.UserTagCreateManyInput[]){
@@ -42,9 +42,9 @@ export class UserTagsService {
     }
   }
 
-  async findUserTags(userId: string) {
+  async findUserCreatedTags(userId: string) {
     try {
-      return await this.tagServiсe.findTags({where: {creator: userId}})
+      return await this.tagService.findTags({where: {creator: userId}})
     }catch (error) {
       throw new BadRequestException(error)
     }

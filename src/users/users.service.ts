@@ -33,8 +33,8 @@ export class UsersService {
 
   async removeUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
     // След строка закомментирована
-    // т.к. в методе logout на данный момент нет функционала кроме удаления токена из бд
-    // это итак произойдет т.к. в таблица token, поле userId установлено на onDelete: Cascade
+    // т.к. в методе logout на данный момент нет функционала кроме удаления токена из бд.
+    // Это итак произойдет ( onDelete: Cascade )
     //
     // await this.authService.logout(where.uid)
     return this.prisma.user.delete({

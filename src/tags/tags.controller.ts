@@ -1,7 +1,6 @@
 import {
-  BadRequestException,
   Body, CacheInterceptor,
-  Controller, DefaultValuePipe, Delete,
+  Controller, Delete,
   Get,
   Param,
   Post, Put,
@@ -17,7 +16,6 @@ import { JwtPayloadDto } from "../tokens/dto";
 import { Request } from "express";
 import { FiltersWhitelistDto } from "./dto/inputDtos";
 import { CreateTagResDto, GetTagResDto, GetTagsWithFiltersResDto, UpdateTagResDto } from "./dto/outputDtos";
-import {Prisma} from "@prisma/client";
 
 @ApiTags('Теги')
 @Controller('tag')
@@ -40,9 +38,6 @@ export class TagsController {
   @ApiResponse({type: GetTagResDto})
   @Get('/:id')
   async getTagById(@Param('id') tagId: number){
-    if(isNaN(tagId)){
-      throw new BadRequestException("id не валиден")
-    }
     return this.tagService.findTag({id: tagId});
   }
 
@@ -56,33 +51,32 @@ export class TagsController {
     filtersDto.sortByOrder && orderBy.push({sortOrder: 'asc'})
     filtersDto.sortByName && orderBy.push({name: 'asc'})
 
-    return await this.tagService.findTags({
+    const params = {
       orderBy: orderBy.length !== 0 ? orderBy : undefined,
       take: filtersDto.length,
       skip: filtersDto.offset,
-    });
-    //return
+    }
+
+    return this.tagService.findTags(params);
   }
 
   @UseGuards(AtAuthGuard)
   @ApiResponse({type: UpdateTagResDto})
   @Put('/:id')
   async updateTag(@Param('id') tagId: number, @Body() tagDto: UpdateTagDto, @Req() req: Request){
-    if(isNaN(tagId)){
-      throw new BadRequestException("id не валиден")
-    }
     const user = req.user as JwtPayloadDto;
-    return this.tagService.updateTag({where: {id: tagId}, data: {...tagDto}},  user.uid)
+    const updateParams = {
+      where: {id: tagId},
+      data: tagDto
+    }
+    return this.tagService.updateTag(updateParams, user.uid)
   }
 
   @UseGuards(AtAuthGuard)
   @ApiResponse({status: 200})
   @Delete('/:id')
   async removeTag(@Param('id') tagId: number, @Req() req: Request){
-    if(isNaN(tagId)){
-      throw new BadRequestException("id не валиден")
-    }
     const user = req.user as JwtPayloadDto;
-    await this.tagService.removeTag({id: tagId}, user.uid)
+    return this.tagService.removeTag({id: tagId}, user.uid)
   }
 }

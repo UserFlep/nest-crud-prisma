@@ -31,23 +31,26 @@ export class UserTagsController {
   @Post()
   async createUserTags(@Body() createUserTagsDto: CreateUserTagsDto, @Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    return await this.userTagsService.createUserTags(createUserTagsDto.tags.map(tagId=>({tagId, userId: user.uid})));
+    return this.userTagsService.createUserTags(createUserTagsDto.tags.map(tagId=>({tagId, userId: user.uid})));
   }
 
   @UseGuards(AtAuthGuard)
   @Delete('/:id')
   async removeUserTag(@Param() removeUserTagDto: RemoveUserTagDto, @Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    return await this.userTagsService.removeUserTag({userId_tagId: {
-      userId: user.uid,
-      tagId: removeUserTagDto.id
-    }});
+    const where = {
+      userId_tagId: {
+        userId: user.uid,
+        tagId: removeUserTagDto.id
+      }
+    }
+    return this.userTagsService.removeUserTag(where);
   }
 
   @UseGuards(AtAuthGuard)
   @Get('/my')
   async getUserCreatedTags(@Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    return await this.userTagsService.findUserTags(user.uid)
+    return this.userTagsService.findUserCreatedTags(user.uid)
   }
 }
