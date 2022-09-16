@@ -4,4 +4,8 @@ import { ApiProperty } from "@nestjs/swagger";
 export class ResCreateUserTagDto {
   @ApiProperty({description: "Обновленный список тегов пользователя"})
   tags: CreateTagResDto[]
+
+  constructor(data) {
+    this.tags = data.tags;
+  }
 }

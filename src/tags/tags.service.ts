@@ -17,23 +17,8 @@ export class TagsService {
       });
   }
 
-  async findTags(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.TagWhereUniqueInput;
-    where?: Prisma.TagWhereInput;
-    orderBy?: Prisma.TagOrderByWithRelationInput[];
-    select?: Prisma.TagSelect | null;
-  }): Promise<Tag[] | {}[]> {
-    const { skip, take, cursor, where, orderBy, select } = params;
-    return this.prisma.tag.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-      select,
-    });
+  async findTags(params: Prisma.TagFindManyArgs): Promise<Tag[]> {
+    return this.prisma.tag.findMany(params);
   }
 
   async createTag (data: Prisma.TagCreateInput): Promise<Tag | null>{

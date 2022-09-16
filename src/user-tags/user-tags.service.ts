@@ -1,41 +1,26 @@
 import { Injectable} from "@nestjs/common";
-import {PrismaService} from "../prisma/prisma.service";
 import {TagsService} from "../tags/tags.service";
+import {UsersService} from "../users/users.service";
+import {Prisma, Tag, User} from "@prisma/client";
 
 @Injectable()
 export class UserTagsService {
 
   constructor(
-      private prisma: PrismaService,
-      private tagService: TagsService
+      private tagService: TagsService,
+      private userService: UsersService
   ) {}
 
-  //оптимизировать, чтоб исп-ся userService
-  async createUserTags (userId: string, tagIds: number[]){
-    return this.prisma.user.update({
-      where: {uid: userId},
-      data: {
-        tags: {
-          connect: tagIds.map(tagId => ({id: tagId}))
-        }
-      }
-    })
+  async createUserTags (params: Prisma.UserUpdateArgs): Promise<User>{
+    return this.userService.updateUser(params)
   }
 
-//оптимизировать, чтоб исп-ся userService
-  async removeUserTag(userId: string, tagId: number) {
-    return this.prisma.user.update({
-      where: {uid: userId},
-      data: {
-        tags: {
-          disconnect: {id: tagId}
-        }
-      }
-    })
+  async removeUserTag(params: Prisma.UserUpdateArgs): Promise<User> {
+    return this.userService.updateUser(params)
   }
 
-  async findUserCreatedTags(userId: string) {
-    return this.tagService.findTags({where: {creator: userId}})
+  async findUserCreatedTags(params: Prisma.TagFindManyArgs): Promise<Tag[]> {
+    return this.tagService.findTags(params)
   }
 
 }

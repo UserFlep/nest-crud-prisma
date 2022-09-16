@@ -30,31 +30,67 @@ export class UserTagsController {
 
   @UseGuards(AtAuthGuard)
   @Post()
-  async createUserTags(@Body() createUserTagsDto: CreateUserTagsDto, @Req() req: Request){
+  async createUserTags(@Body() createUserTagsDto: CreateUserTagsDto, @Req() req: Request): Promise<ResCreateUserTagDto>{
     const user = req.user as JwtPayloadDto;
-    return await this.userTagsService.createUserTags(user.uid, createUserTagsDto.tags)
+    const params = {
+      where: {uid: user.uid},
+      data: {
+        tags: {
+          connect: createUserTagsDto.tags.map(tagId => ({id: tagId}))
+        }
+      },
+      select: {
+        tags: {
+          select: {
+            id: true,
+            name: true,
+            sortOrder: true
+          }
+        }
+      }
+    }
+    const userTags = await this.userTagsService.createUserTags(params)
       .catch(error =>{
         throw new BadRequestException(error)
       });
+    return new ResCreateUserTagDto(userTags)
   }
 
   @UseGuards(AtAuthGuard)
   @Delete('/:id')
-  async removeUserTag(@Param() removeUserTagDto: RemoveUserTagDto, @Req() req: Request){
+  async removeUserTag(@Param() removeUserTagDto: RemoveUserTagDto, @Req() req: Request): Promise<ResRemoveUserTagDto>{
     const user = req.user as JwtPayloadDto;
-    return await this.userTagsService.removeUserTag(user.uid, removeUserTagDto.id)
+    const params = {
+      where: {uid: user.uid},
+      data: {
+        tags: {
+          disconnect: {id: removeUserTagDto.id}
+        }
+      }
+    }
+    const userTags = await this.userTagsService.removeUserTag(params)
       .catch(error =>{
         throw new BadRequestException(error)
       });
+    return new ResRemoveUserTagDto(userTags);
   }
 
   @UseGuards(AtAuthGuard)
   @Get('/my')
-  async getUserCreatedTags(@Req() req: Request){
+  async getUserCreatedTags(@Req() req: Request): Promise<ResGetUserCreatedTagsDto>{
     const user = req.user as JwtPayloadDto;
-    return await this.userTagsService.findUserCreatedTags(user.uid)
+    const params = {
+      where: {creator: user.uid},
+      select: {
+        id: true,
+        name: true,
+        sortOrder: true
+      }
+    };
+    const userCreatedTags = await this.userTagsService.findUserCreatedTags(params)
       .catch(error =>{
         throw new BadRequestException(error)
       });
+    return new ResGetUserCreatedTagsDto(userCreatedTags)
   }
 }
