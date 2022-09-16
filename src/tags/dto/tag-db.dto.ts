@@ -21,4 +21,5 @@ export class TagDbDto {
   @IsNumber()
   @Transform(({ value} ) => Number(value))
   sortOrder: number;
+
 }
