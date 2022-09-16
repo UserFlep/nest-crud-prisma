@@ -6,6 +6,6 @@ export class OutCreateUserTagDto {
   tags: OutCreateTagDto[]
 
   constructor(data) {
-    this.tags = data.tags;
+    this.tags = data.tags || [];
   }
 }
