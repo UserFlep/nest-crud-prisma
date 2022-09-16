@@ -16,19 +16,12 @@ export class UsersService {
     });
   }
 
-  async updateUser(params: {
-    where: Prisma.UserWhereUniqueInput;
-    data: Prisma.UserUpdateInput;
-  }): Promise<User> {
-    const { where, data } = params;
-    if(data.password){
-      const hashPassword = await bcrypt.hash(data.password, 3);
-      data.password = hashPassword
+  async updateUser(params: Prisma.UserUpdateArgs): Promise<User> {
+    if(params.data.password){
+      const hashPassword = await bcrypt.hash(params.data.password, 3);
+      params.data.password = hashPassword;
     }
-    return this.prisma.user.update({
-      data,
-      where,
-    });
+    return this.prisma.user.update(params);
   }
 
   async removeUser(where: Prisma.UserWhereUniqueInput): Promise<User> {

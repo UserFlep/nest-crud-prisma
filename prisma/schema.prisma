@@ -19,7 +19,8 @@ model User {
     tags        Tag[]   @relation("UserTags")
     createdTags Tag[]   @relation("CreatedTags")
 }
-
+// UserTags - many-to-many
+// CreatedTags - one-to-many
 model Tag {
     id          Int     @db.Integer           @default(autoincrement()) @id
     name        String  @db.VarChar(40)  @unique

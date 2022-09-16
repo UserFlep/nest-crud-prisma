@@ -12,7 +12,7 @@ export class AuthController {
 
   constructor(private authService: AuthService) {}
 
-  refreshCookieName = 'refreshToken';
+  refreshCookieName = process.env.REFRESH_TOKEN_COOKIE_NAME;
   cookieOptions = {
     maxAge: Number(process.env.REFRESH_EXPIRES_IN),
     httpOnly: true
