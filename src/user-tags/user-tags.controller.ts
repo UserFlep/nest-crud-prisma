@@ -16,8 +16,8 @@ import {Request} from "express";
 import { JwtPayloadDto } from "../tokens/dto";
 import { UserTagsService } from "./user-tags.service";
 import { ApiTags } from "@nestjs/swagger";
-import { ResCreateUserTagDto, ResGetUserCreatedTagsDto, ResRemoveUserTagDto } from "./dto/OutputDtos";
-import { CreateUserTagsDto, RemoveUserTagDto } from "./dto/inputDtos";
+import { OutCreateUserTagDto, OutGetUserCreatedTagsDto, OutRemoveUserTagDto } from "./dto/OutputDtos";
+import { InCreateUserTagsDto, InRemoveUserTagDto } from "./dto/inputDtos";
 
 @ApiTags('Теги пользователя')
 @Controller('/user/tag')
@@ -30,7 +30,7 @@ export class UserTagsController {
 
   @UseGuards(AtAuthGuard)
   @Post()
-  async createUserTags(@Body() createUserTagsDto: CreateUserTagsDto, @Req() req: Request): Promise<ResCreateUserTagDto>{
+  async createUserTags(@Body() createUserTagsDto: InCreateUserTagsDto, @Req() req: Request): Promise<OutCreateUserTagDto>{
     const user = req.user as JwtPayloadDto;
     const params = {
       where: {uid: user.uid},
@@ -53,12 +53,12 @@ export class UserTagsController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
-    return new ResCreateUserTagDto(userTags)
+    return new OutCreateUserTagDto(userTags)
   }
 
   @UseGuards(AtAuthGuard)
   @Delete('/:id')
-  async removeUserTag(@Param() removeUserTagDto: RemoveUserTagDto, @Req() req: Request): Promise<ResRemoveUserTagDto>{
+  async removeUserTag(@Param() removeUserTagDto: InRemoveUserTagDto, @Req() req: Request): Promise<OutRemoveUserTagDto>{
     const user = req.user as JwtPayloadDto;
     const params = {
       where: {uid: user.uid},
@@ -72,12 +72,12 @@ export class UserTagsController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
-    return new ResRemoveUserTagDto(userTags);
+    return new OutRemoveUserTagDto(userTags);
   }
 
   @UseGuards(AtAuthGuard)
   @Get('/my')
-  async getUserCreatedTags(@Req() req: Request): Promise<ResGetUserCreatedTagsDto>{
+  async getUserCreatedTags(@Req() req: Request): Promise<OutGetUserCreatedTagsDto>{
     const user = req.user as JwtPayloadDto;
     const params = {
       where: {creator: user.uid},
@@ -91,6 +91,6 @@ export class UserTagsController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
-    return new ResGetUserCreatedTagsDto(userCreatedTags)
+    return new OutGetUserCreatedTagsDto(userCreatedTags)
   }
 }

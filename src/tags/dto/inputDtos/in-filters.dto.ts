@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsNumber } from "class-validator";
 import { Transform } from "class-transformer";
 
-export  class FiltersWhitelistDto {
+export  class InFiltersDto {
   @ApiProperty({description: "Сортировать по полю сортировки", default: false})
   @Transform(({ value} ) => value !== undefined)
   @IsBoolean()

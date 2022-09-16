@@ -11,12 +11,12 @@ import {
 } from "@nestjs/common";
 import { ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AtAuthGuard } from "../auth/guards";
-import { CreateTagDto, UpdateTagDto } from "./dto/inputDtos";
+import { InCreateTagDto, InUpdateTagDto } from "./dto/inputDtos";
 import { TagsService } from "./tags.service";
 import { JwtPayloadDto } from "../tokens/dto";
 import { Request } from "express";
-import { FiltersWhitelistDto } from "./dto/inputDtos";
-import { CreateTagResDto, GetTagResDto, GetTagsWithFiltersResDto, UpdateTagResDto } from "./dto/outputDtos";
+import { InFiltersDto } from "./dto/inputDtos";
+import { OutCreateTagDto, OutGetTagDto, OutGetTagsWithFiltersDto, OutUpdateTagDto } from "./dto/outputDtos";
 
 @ApiTags('Теги')
 @Controller('tag')
@@ -28,9 +28,9 @@ export class TagsController {
   ) {}
 
   @UseGuards(AtAuthGuard)
-  @ApiResponse({type: CreateTagResDto})
+  @ApiResponse({type: OutCreateTagDto})
   @Post()
-  async createTag(@Body() tagDto: CreateTagDto, @Req() req: Request): Promise<CreateTagResDto>{
+  async createTag(@Body() tagDto: InCreateTagDto, @Req() req: Request): Promise<OutCreateTagDto>{
     const user = req.user as JwtPayloadDto;
     const params = {
       data: {
@@ -47,13 +47,13 @@ export class TagsController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
-    return new CreateTagResDto(createdTag)
+    return new OutCreateTagDto(createdTag)
   }
 
   @UseGuards(AtAuthGuard)
-  @ApiResponse({type: GetTagResDto})
+  @ApiResponse({type: OutGetTagDto})
   @Get('/:id')
-  async getTagById(@Param('id') tagId: number): Promise<GetTagResDto>{
+  async getTagById(@Param('id') tagId: number): Promise<OutGetTagDto>{
     const params = {
       where: {id: tagId},
       select: {
@@ -71,13 +71,13 @@ export class TagsController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
-    return new GetTagResDto(tag);
+    return new OutGetTagDto(tag);
   }
 
   @UseGuards(AtAuthGuard)
-  @ApiResponse({type: GetTagsWithFiltersResDto})
+  @ApiResponse({type: OutGetTagsWithFiltersDto})
   @Get()
-  async getTagsWithFilters(@Query() filtersDto: FiltersWhitelistDto): Promise<GetTagsWithFiltersResDto>{
+  async getTagsWithFilters(@Query() filtersDto: InFiltersDto): Promise<OutGetTagsWithFiltersDto>{
     const orderBy = [];
     filtersDto.sortByOrder && orderBy.push({sortOrder: 'asc'})
     filtersDto.sortByName && orderBy.push({name: 'asc'})
@@ -108,17 +108,17 @@ export class TagsController {
       length: filtersDto.length,
       quantity: tagsCount
     }
-    return new GetTagsWithFiltersResDto(tags, meta);
+    return new OutGetTagsWithFiltersDto(tags, meta);
   }
 
   @UseGuards(AtAuthGuard)
-  @ApiResponse({type: UpdateTagResDto})
+  @ApiResponse({type: OutUpdateTagDto})
   @Put('/:id')
   async updateTag(
       @Param('id') tagId: number,
-      @Body() tagDto: UpdateTagDto,
+      @Body() tagDto: InUpdateTagDto,
       @Req() req: Request
-  ): Promise<UpdateTagResDto>{
+  ): Promise<OutUpdateTagDto>{
     const user = req.user as JwtPayloadDto;
     const params = {
       where: {id: tagId},
@@ -138,7 +138,7 @@ export class TagsController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
-    return new UpdateTagResDto(updatedTag)
+    return new OutUpdateTagDto(updatedTag)
   }
 
   @UseGuards(AtAuthGuard)

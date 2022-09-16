@@ -1,7 +1,7 @@
 import { OmitType } from "@nestjs/swagger";
-import { UpdateUserDto } from "../inputDtos";
+import { InUpdateUserDto } from "../inputDtos";
 
-export class UpdateUserResDto extends OmitType(UpdateUserDto, ['password'] as const) {
+export class OutUpdateUserDto extends OmitType(InUpdateUserDto, ['password'] as const) {
     constructor(data) {
         super();
         this.email=data.email;

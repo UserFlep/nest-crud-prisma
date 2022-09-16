@@ -10,7 +10,7 @@ class TagCreator extends PickType(UserDbDto, ['uid', 'nickname'] as const){
   }
 }
 
-export class GetTagResDto extends OmitType(TagDbDto, ['id', 'creator'] as const){
+export class OutGetTagDto extends OmitType(TagDbDto, ['id', 'creator'] as const){
   @ApiProperty({description: "Создатель тега"})
   readonly creator: TagCreator;
 

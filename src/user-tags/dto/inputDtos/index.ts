@@ -1,2 +1,2 @@
-export * from "./create-user-tags.dto"
-export * from "./remove-user-tag.dto"
+export * from "./in-create-user-tags.dto"
+export * from "./in-remove-user-tag.dto"

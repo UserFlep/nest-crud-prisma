@@ -1,2 +1,2 @@
-export * from "./get-one-user-res.dto"
-export * from "./update-user-res.dto"
+export * from "./out-get-one-user.dto"
+export * from "./out-update-user.dto"

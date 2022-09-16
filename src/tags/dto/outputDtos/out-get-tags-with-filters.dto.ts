@@ -1,4 +1,4 @@
-import { GetTagResDto } from "./get-tag-res.dto";
+import { OutGetTagDto } from "./out-get-tag.dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 class GetTagsMeta {
@@ -9,12 +9,12 @@ class GetTagsMeta {
   @ApiProperty({example: 232, description: "Общее количество"})
   readonly quantity: number;
 }
-export class GetTagsWithFiltersResDto {
-  data: GetTagResDto[];
+export class OutGetTagsWithFiltersDto {
+  data: OutGetTagDto[];
   meta: GetTagsMeta;
 
   constructor(data, meta) {
-    this.data = data.map(el => new GetTagResDto(el));
+    this.data = data.map(el => new OutGetTagDto(el));
     this.meta = meta;
   }
 }

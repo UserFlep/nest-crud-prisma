@@ -1,3 +1,3 @@
-export * from "./res-create-user-tag.dto"
-export * from "./res-remove-user-tag.dto"
-export * from "./res-get-user-created-tags.dto"
+export * from "./out-create-user-tag.dto"
+export * from "./out-remove-user-tag.dto"
+export * from "./out-get-user-created-tags.dto"

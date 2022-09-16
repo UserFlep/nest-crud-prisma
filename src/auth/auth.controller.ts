@@ -1,6 +1,6 @@
 import {Body, Controller, Post, Headers, Res, Req, UseGuards, Get, BadRequestException} from "@nestjs/common";
 import { ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { LoginEmailUserDto, CreateUserDto } from "../users/dto/inputDtos";
+import { InLoginUserDto, InCreateUserDto } from "../users/dto/inputDtos";
 import { AuthService } from "./auth.service";
 import { JwtPayloadDto, TokensDto } from "../tokens/dto";
 import { Request, Response } from 'express';
@@ -20,7 +20,7 @@ export class AuthController {
 
   @ApiResponse({type: TokensDto})
   @Post('signin') //signup
-  async registration(@Body() userDto: CreateUserDto, @Res({ passthrough: true }) res: Response):Promise<TokensDto>{
+  async registration(@Body() userDto: InCreateUserDto, @Res({ passthrough: true }) res: Response):Promise<TokensDto>{
     const tokens = await this.authService.registration(userDto)
       .catch(error =>{
         throw new BadRequestException(error)
@@ -32,7 +32,7 @@ export class AuthController {
 
   @ApiResponse({type: TokensDto})
   @Post('login')
-  async login(@Body() userDto: LoginEmailUserDto, @Res({ passthrough: true }) res: Response):Promise<TokensDto>{
+  async login(@Body() userDto: InLoginUserDto, @Res({ passthrough: true }) res: Response):Promise<TokensDto>{
     const tokens = await this.authService.login(userDto)
       .catch(error =>{
         throw new BadRequestException(error)

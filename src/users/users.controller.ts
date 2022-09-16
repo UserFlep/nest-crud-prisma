@@ -13,11 +13,11 @@ import {
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
-import { AtAuthGuard, RtAuthGuard } from "../auth/guards";
+import { AtAuthGuard } from "../auth/guards";
 import { Request, Response } from "express";
 import { JwtPayloadDto } from "../tokens/dto";
-import { UpdateUserDto} from "./dto/inputDtos";
-import { GetOneUserResDto, UpdateUserResDto } from "./dto/outputDtos";
+import { InUpdateUserDto} from "./dto/inputDtos";
+import { OutGetOneUserDto, OutUpdateUserDto } from "./dto/outputDtos";
 
 @ApiTags('Пользователи')
 @Controller('user')
@@ -31,9 +31,9 @@ export class UsersController {
   ) {}
 
   @UseGuards(AtAuthGuard)
-  @ApiResponse({type: GetOneUserResDto})
+  @ApiResponse({type: OutGetOneUserDto})
   @Get()
-  async getOneUser(@Req() req: Request): Promise<GetOneUserResDto>{
+  async getOneUser(@Req() req: Request): Promise<OutGetOneUserDto>{
     const user = req.user as JwtPayloadDto; //req.user это распарсенный jwt payload // или <User>req.user
     const userWithTags = await this.userService.findUser({
       where: {uid: user.uid},
@@ -53,13 +53,13 @@ export class UsersController {
         console.log(error.message)
         throw new BadRequestException(error)
       });
-    return new GetOneUserResDto(userWithTags);
+    return new OutGetOneUserDto(userWithTags);
   }
 
   @UseGuards(AtAuthGuard)
-  @ApiResponse({type: UpdateUserResDto})
+  @ApiResponse({type: OutUpdateUserDto})
   @Put()
-  async updateUser(@Body() userDto: UpdateUserDto, @Req() req: Request): Promise<UpdateUserResDto>{
+  async updateUser(@Body() userDto: InUpdateUserDto, @Req() req: Request): Promise<OutUpdateUserDto>{
     const user = req.user as JwtPayloadDto;
     const updatedUser = await this.userService.updateUser({
       where: {uid: user.uid},
@@ -72,7 +72,7 @@ export class UsersController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
-    return new UpdateUserResDto(updatedUser);
+    return new OutUpdateUserDto(updatedUser);
   }
 
   @UseGuards(AtAuthGuard)

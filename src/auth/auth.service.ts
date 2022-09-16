@@ -1,7 +1,7 @@
 import {BadRequestException, Injectable} from "@nestjs/common";
 import * as bcrypt from 'bcryptjs';
 import { TokensDto } from "../tokens/dto";
-import { CreateUserDto, LoginEmailUserDto } from "../users/dto/inputDtos";
+import { InCreateUserDto, InLoginUserDto } from "../users/dto/inputDtos";
 import { UsersService } from "../users/users.service";
 import {TokensService} from "../tokens/tokens.service"
 
@@ -13,7 +13,7 @@ export class AuthService {
     private tokenService: TokensService,
   ) {}
 
-  async registration (userDto: CreateUserDto): Promise<TokensDto> {
+  async registration (userDto: InCreateUserDto): Promise<TokensDto> {
     const hashPassword = await bcrypt.hash(userDto.password, 3);
     const user = await this.usersService.createUser({ ...userDto, password: hashPassword });
     const tokens = await this.tokenService.generateTokens(user);
@@ -21,7 +21,7 @@ export class AuthService {
     return tokens;
   }
 
-  async login (userDto: LoginEmailUserDto): Promise<TokensDto> {
+  async login (userDto: InLoginUserDto): Promise<TokensDto> {
 
       const validUser = await this.usersService.findUser({where: {email: userDto.email}});
       if(!validUser){
