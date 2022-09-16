@@ -14,7 +14,7 @@ export class OutGetTagsWithFiltersDto {
   meta: GetTagsMeta;
 
   constructor(data, meta) {
-    this.data = data.map(el => new OutGetTagDto(el));
+    this.data = data.map(el => new OutGetTagDto(el)) || [];
     this.meta = meta;
   }
 }

@@ -6,6 +6,6 @@ export class OutGetUserCreatedTagsDto {
   tags: OutCreateTagDto[]
 
   constructor(data) {
-    this.tags = data;
+    this.tags = data || [];
   }
 }

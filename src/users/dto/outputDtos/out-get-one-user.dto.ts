@@ -9,6 +9,6 @@ export class OutGetOneUserDto extends OmitType(UserDbDto, ['uid', 'password'] as
     super();
     this.nickname = data.nickname;
     this.email = data.nickname;
-    this.tags = data.tags;
+    this.tags = data.tags || [];
   }
 }
