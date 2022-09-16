@@ -41,13 +41,9 @@ export class UsersController {
         nickname: true,
         tags: {
           select: {
-            tag: {
-              select: {
-                id: true,
-                name: true,
-                sortOrder: true
-              }
-            }
+            id: true,
+            name: true,
+            sortOrder: true
           }
         }
       }

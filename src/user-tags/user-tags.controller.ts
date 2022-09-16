@@ -32,7 +32,7 @@ export class UserTagsController {
   @Post()
   async createUserTags(@Body() createUserTagsDto: CreateUserTagsDto, @Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    return await this.userTagsService.createUserTags(createUserTagsDto.tags.map(tagId=>({tagId, userId: user.uid})))
+    return await this.userTagsService.createUserTags(user.uid, createUserTagsDto.tags)
       .catch(error =>{
         throw new BadRequestException(error)
       });
@@ -42,13 +42,7 @@ export class UserTagsController {
   @Delete('/:id')
   async removeUserTag(@Param() removeUserTagDto: RemoveUserTagDto, @Req() req: Request){
     const user = req.user as JwtPayloadDto;
-    const where = {
-      userId_tagId: {
-        userId: user.uid,
-        tagId: removeUserTagDto.id
-      }
-    }
-    return await this.userTagsService.removeUserTag(where)
+    return await this.userTagsService.removeUserTag(user.uid, removeUserTagDto.id)
       .catch(error =>{
         throw new BadRequestException(error)
       });

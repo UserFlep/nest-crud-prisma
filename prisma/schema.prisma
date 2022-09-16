@@ -16,8 +16,8 @@ model User {
     password    String @db.VarChar(100)
     email       String @db.VarChar(100)  @unique
     token       Token?
-    tags        UserTag[]
-    createdTags Tag[]
+    tags        Tag[]   @relation("UserTags")
+    createdTags Tag[]   @relation("CreatedTags")
 }
 
 model Tag {
@@ -25,17 +25,8 @@ model Tag {
     name        String  @db.VarChar(40)  @unique
     creator     String? @db.Uuid
     sortOrder   Int     @db.Integer
-    user        User? @relation(fields: [creator], references: [uid], onDelete: SetNull )
-    users       UserTag[]
-}
-
-model UserTag {
-    user    User    @relation(fields: [userId], references: [uid], onDelete: Cascade)
-    userId  String  @db.Uuid
-    tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
-    tagId   Int     @db.Integer
-
-    @@id([userId, tagId])
+    user        User? @relation("CreatedTags", fields: [creator], references: [uid], onDelete: SetNull )
+    users       User[] @relation("UserTags")
 }
 
 model Token {
