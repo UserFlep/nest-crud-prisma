@@ -31,29 +31,29 @@ export class TagsService {
     if(where.id){
       const matchesTag = await this.prisma.tag.findUnique({where: {id: where.id}})
       if(!matchesTag){
-        throw new BadRequestException("Тег не найден")
+        throw new BadRequestException("Tag not found")
       }
       //Тег обновляется создателем
       if(matchesTag.creator !== userId){
-        throw new UnauthorizedException("Только создатель может изменять тег")
+        throw new UnauthorizedException("Only creator can do it")
       }
     }
     return this.prisma.tag.update(params);
   }
 
-  async removeTag(where: Prisma.TagWhereUniqueInput, userId: string): Promise<void> {
+  async removeTag(where: Prisma.TagWhereUniqueInput, userId: string): Promise<Tag> {
     //Тег с таким ид существует
     if(where.id){
       const matchesTag = await this.prisma.tag.findUnique({where: {id: where.id}})
       if(!matchesTag){
-        throw new BadRequestException("Тег не найден")
+        throw new BadRequestException("Tag not found")
       }
       //Тег удаляется создателем
       if(matchesTag.creator !== userId){
-        throw new UnauthorizedException("Только создатель может удалять тег")
+        throw new UnauthorizedException("Only creator can do it")
       }
     }
-    this.prisma.tag.delete({
+    return this.prisma.tag.delete({
       where,
     });
   }

@@ -66,6 +66,15 @@ export class UserTagsController {
         tags: {
           disconnect: {id: removeUserTagDto.id}
         }
+      },
+      select: {
+        tags: {
+          select: {
+            id: true,
+            name: true,
+            sortOrder: true
+          }
+        }
       }
     }
     const userTags = await this.userTagsService.removeUserTag(params)

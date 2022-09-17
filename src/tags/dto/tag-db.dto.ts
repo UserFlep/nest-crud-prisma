@@ -5,7 +5,7 @@ import { Transform } from "class-transformer";
 export class TagDbDto {
   @ApiProperty({example: "1", description: "Уникальный идентификатор"})
   @IsNumber()
-  @Transform(({ value} ) => Number(value))
+  @Transform(({value} ) => Number(value))
   id: number;
 
   @ApiProperty({example: "Тег1", description: "Название"})

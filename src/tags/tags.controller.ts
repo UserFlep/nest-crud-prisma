@@ -11,11 +11,10 @@ import {
 } from "@nestjs/common";
 import { ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AtAuthGuard } from "../auth/guards";
-import { InCreateTagDto, InUpdateTagDto } from "./dto/inputDtos";
+import {InCreateTagDto, InParamTagIdDto, InUpdateTagDto, InFiltersDto} from "./dto/inputDtos";
 import { TagsService } from "./tags.service";
 import { JwtPayloadDto } from "../tokens/dto";
 import { Request } from "express";
-import { InFiltersDto } from "./dto/inputDtos";
 import { OutCreateTagDto, OutGetTagDto, OutGetTagsWithFiltersDto, OutUpdateTagDto } from "./dto/outputDtos";
 
 @ApiTags('Теги')
@@ -53,9 +52,9 @@ export class TagsController {
   @UseGuards(AtAuthGuard)
   @ApiResponse({type: OutGetTagDto})
   @Get('/:id')
-  async getTagById(@Param('id') tagId: number): Promise<OutGetTagDto>{
+  async getTagById(@Param() getTagDto: InParamTagIdDto): Promise<OutGetTagDto>{
     const params = {
-      where: {id: tagId},
+      where: {id: getTagDto.id},
       select: {
         name: true,
         sortOrder: true,
@@ -71,6 +70,9 @@ export class TagsController {
       .catch(error =>{
         throw new BadRequestException(error)
       });
+    if(!tag){
+      throw new BadRequestException("Tag not found")
+    }
     return new OutGetTagDto(tag);
   }
 
@@ -115,14 +117,14 @@ export class TagsController {
   @ApiResponse({type: OutUpdateTagDto})
   @Put('/:id')
   async updateTag(
-      @Param('id') tagId: number,
-      @Body() tagDto: InUpdateTagDto,
+      @Param() tagParamDto: InParamTagIdDto,
+      @Body() tagBodyDto: InUpdateTagDto,
       @Req() req: Request
   ): Promise<OutUpdateTagDto>{
     const user = req.user as JwtPayloadDto;
     const params = {
-      where: {id: tagId},
-      data: tagDto,
+      where: {id: tagParamDto.id},
+      data: tagBodyDto,
       select: {
         name: true,
         sortOrder: true,

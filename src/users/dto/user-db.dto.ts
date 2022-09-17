@@ -12,7 +12,6 @@ export class UserDbDto {
   nickname: string;
 
   @ApiProperty({example: "qERds325Wt1!", description: "Пароль"})
-  @IsString()
   @Length(8,100)
   @Matches(new RegExp("[0-9]+"), {message: "at least 1 digit is required"})
   @Matches(new RegExp("[a-z]+"), {message: "at least 1 lowercase letter is required"})
