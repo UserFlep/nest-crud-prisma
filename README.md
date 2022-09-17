@@ -25,6 +25,7 @@
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Deployed on https://alex-crud-api.herokuapp.com/
 
 ## Installation
 
