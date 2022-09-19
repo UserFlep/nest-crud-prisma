@@ -27,34 +27,28 @@
 ### Deployed: https://alex-crud-api.herokuapp.com/
 ### Swagger: https://alex-crud-api.herokuapp.com/api/docs#
 
-## Installation
+# NestJS Prisma Docker
 
 ```bash
-$ npm install
+npm install
+cp .env.example .env
+npx prisma generate
+npm run start:dev
 ```
 
-## Running the app
+## Docker File
+
+Get started by running
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker build -t nest-api .
+docker run -p 3000:3000 --env-file .env -d nest-api
 ```
 
-## Test
+## Docker Compose
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker-compose up
+# or detached
+docker-compose up -d
 ```
