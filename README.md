@@ -31,7 +31,6 @@
 
 ```bash
 npm install
-cp .env.example .env
 npx prisma generate
 npm run start:dev
 ```
