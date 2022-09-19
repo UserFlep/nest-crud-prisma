@@ -10,9 +10,39 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
       .setTitle('Nestjs API')
-      .setDescription('API с JWT авторизацией, кешированием запросов. ORM - Sequelize, БД - postgres')
+      .setDescription('API с JWT авторизацией, кешированием запросов. ORM - Prisma, БД - Postgres.' +
+          '<div>' +
+          '<b>Эндпоинты</b>:' +
+          '<p>auth - Авторизация и регистрация пользователей, работы с токенами.</p>' +
+          '<p>user - CRUD для пользователей.</p>' +
+          '<p>tag - CRUD для тегов.</p>' +
+          '<p>user/tag - CRUD для тегов пользователя. Пользователю могут назначатся теги, созданные как им самим, так и другими пользователями. У каждого тега есть создатетель.</p>' +
+          '</div>' +
+          '<div>' +
+          '<b>Авторизация</b>:' +
+          '<p>Пользователю выдается access и refresh токен. ' +
+          'Refresh дополнительно сохраняется в бд для дальнейшей верификации. ' +
+          'Access записывается и хранится в cookie.</p>' +
+          '</div>')
       .setVersion('1.0')
+      .addBearerAuth({
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            name: 'JWT Access',
+            description: 'Enter JWT Access token',
+            in: 'header',
+          })
       .build();
+// .addBearerAuth({
+//             type: 'http',
+//             scheme: 'bearer',
+//             bearerFormat: 'JWT',
+//             name: 'JWT Refresh',
+//             description: 'Enter JWT Refresh token',
+//             in: 'cookie',
+//         },
+//         'jwt-refresh')
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api/docs', app, document);
 

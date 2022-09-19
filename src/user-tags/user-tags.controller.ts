@@ -15,11 +15,12 @@ import { AtAuthGuard } from "../auth/guards";
 import {Request} from "express";
 import { JwtPayloadDto } from "../tokens/dto";
 import { UserTagsService } from "./user-tags.service";
-import { ApiTags } from "@nestjs/swagger";
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import { OutCreateUserTagDto, OutGetUserCreatedTagsDto, OutRemoveUserTagDto } from "./dto/OutputDtos";
 import { InCreateUserTagsDto, InRemoveUserTagDto } from "./dto/inputDtos";
 
 @ApiTags('Теги пользователя')
+@ApiBearerAuth()
 @Controller('/user/tag')
 @UseInterceptors(CacheInterceptor)
 export class UserTagsController {
@@ -28,6 +29,8 @@ export class UserTagsController {
     private userTagsService: UserTagsService
   ) {}
 
+  @ApiResponse({type: OutCreateUserTagDto})
+  @ApiOperation({ summary: 'Присвоить тег пользователю' })
   @UseGuards(AtAuthGuard)
   @Post()
   async createUserTags(@Body() createUserTagsDto: InCreateUserTagsDto, @Req() req: Request): Promise<OutCreateUserTagDto>{
@@ -56,6 +59,8 @@ export class UserTagsController {
     return new OutCreateUserTagDto(userTags)
   }
 
+  @ApiResponse({type: OutRemoveUserTagDto})
+  @ApiOperation({ summary: 'Удалить тег пользователя' })
   @UseGuards(AtAuthGuard)
   @Delete('/:id')
   async removeUserTag(@Param() removeUserTagDto: InRemoveUserTagDto, @Req() req: Request): Promise<OutRemoveUserTagDto>{
@@ -84,6 +89,8 @@ export class UserTagsController {
     return new OutRemoveUserTagDto(userTags);
   }
 
+  @ApiResponse({type: OutGetUserCreatedTagsDto})
+  @ApiOperation({ summary: 'Получить теги, созданные пользователем' })
   @UseGuards(AtAuthGuard)
   @Get('/my')
   async getUserCreatedTags(@Req() req: Request): Promise<OutGetUserCreatedTagsDto>{

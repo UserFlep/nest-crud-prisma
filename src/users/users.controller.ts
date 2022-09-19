@@ -12,7 +12,7 @@ import {
   UseInterceptors
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { ApiResponse, ApiTags } from "@nestjs/swagger";
+import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import { AtAuthGuard } from "../auth/guards";
 import { Request, Response } from "express";
 import { JwtPayloadDto } from "../tokens/dto";
@@ -20,6 +20,7 @@ import { InUpdateUserDto} from "./dto/inputDtos";
 import { OutGetOneUserDto, OutUpdateUserDto } from "./dto/outputDtos";
 
 @ApiTags('Пользователи')
+@ApiBearerAuth()
 @Controller('user')
 @UseInterceptors(CacheInterceptor)
 export class UsersController {
@@ -32,6 +33,7 @@ export class UsersController {
 
   @UseGuards(AtAuthGuard)
   @ApiResponse({type: OutGetOneUserDto})
+  @ApiOperation({ summary: 'Получить пользователя' })
   @Get()
   async getOneUser(@Req() req: Request): Promise<OutGetOneUserDto>{
     const user = req.user as JwtPayloadDto; //req.user это распарсенный jwt payload // или <User>req.user
@@ -58,6 +60,7 @@ export class UsersController {
 
   @UseGuards(AtAuthGuard)
   @ApiResponse({type: OutUpdateUserDto})
+  @ApiOperation({ summary: 'Обновить пользователя' })
   @Put()
   async updateUser(@Body() userDto: InUpdateUserDto, @Req() req: Request): Promise<OutUpdateUserDto>{
     const user = req.user as JwtPayloadDto;
@@ -77,6 +80,7 @@ export class UsersController {
 
   @UseGuards(AtAuthGuard)
   @ApiResponse({status: 200})
+  @ApiOperation({ summary: 'Удалить пользователя' })
   @Delete()
   async removeUser(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<void>{
     const user = req.user as JwtPayloadDto;

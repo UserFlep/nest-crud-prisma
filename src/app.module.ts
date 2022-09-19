@@ -11,10 +11,10 @@ import {ConfigModule} from "@nestjs/config";
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({
-    //   envFilePath: `.env.${process.env.NODE_ENV}`,
-    //   expandVariables: true,
-    // }),
+    ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+      expandVariables: true,
+    }),
     CacheModule.register({
       isGlobal: true
     }),
